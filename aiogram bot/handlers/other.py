@@ -2,6 +2,8 @@ from aiogram import types, Dispatcher
 from create_bot import dp
 from pymystem3 import Mystem
 import pandas as pd
+from handlers.admin import send_qa_to_db
+
 df2 = pd.read_csv('csv/mystem_faculty.csv', delimiter=';', encoding='1251')
 df3 = pd.read_csv('csv/result.csv', delimiter=';', encoding='1251')
 
@@ -12,7 +14,9 @@ async def send_question(message: types.Message):
     ans = await bot_sentence(sentence,faculty)
     for item in ans:
         await message.answer(item)
-    
+    await send_qa_to_db(message.from_user.id, message.text, ans)
+
+
 async def mystem_words(document_text):  # частотный словарь начальных форм (для поиска факультета)
     text_string = document_text.lower()
     lemmas = []
@@ -20,7 +24,6 @@ async def mystem_words(document_text):  # частотный словарь на
     for s in text_string.split(';'):
         lemmas += [lemma for lemma in m.lemmatize(s) if lemma.isalpha()]
         D = " ".join(lemmas)
-    print(D)
     return D
 
 
@@ -100,7 +103,6 @@ async def bot_sentence(sentence, faculty):
         if await question_from_user(sentence, value):
             column = key
             break
-    print(column)
     if not column:
         answers.append(f"Повторите еще раз запрос\nНекорректно указан вопрос")
     else:

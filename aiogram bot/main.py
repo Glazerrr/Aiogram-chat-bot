@@ -4,7 +4,7 @@ from create_bot import dp
 async def on_startup(_):
     print('Бот включился')
 
-from handlers import other, client, admin
+from handlers import other, client
 
 client.register_handlers_client(dp)
 other.register_handlers_other(dp)
