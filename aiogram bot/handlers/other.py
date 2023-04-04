@@ -66,7 +66,6 @@ async def search_faculty(document_text):
     except:
         out.append(['Направление не найдено'])
         return out
-    #out = [[df3.iloc[maximal[i][0]]['Направление подготовки (специальности)'], df3.iloc[maximal[i][0]]['Форма обучения']] for i in range(len(maximal)) if len(maximal[i][1]) == len(a[1])] # првоерка на то что максимальных элементов несколько, 
     for i in range(len(maximal)):
         if len(maximal[i][1]) == len(a[1]):  
             out.append([df3.iloc[maximal[i][0]]['Направление подготовки (специальности)'], df3.iloc[maximal[i][0]]['Форма обучения']])  # 
