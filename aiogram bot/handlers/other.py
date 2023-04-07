@@ -13,7 +13,7 @@ async def send_question(message: types.Message):
     faculty = await search_faculty(message.text)
     ans = await bot_sentence(sentence,faculty)
     for item in ans:
-        await message.answer(item)
+        await message.answer(item, parse_mode="Markdown")
     await send_qa_to_db(message.from_user.id, message.text, ans)
 
 
@@ -51,7 +51,7 @@ async def search_faculty(document_text):
     for names in df2:  # создаем список множеств факультетов
         faculty.append(set(names.split(" ")))
     for i in faculty: # убираем ненужные слова
-        i -= {a for a in i if len(a) < 3}
+        i -= {a for a in i if len(a) < 4}
     text_string = await mystem_words(
         document_text)  # создаем предложение, состоящее из начальных форм предложения пользователя
     words = {word for word in text_string.split(" ")} # добавляем слова введенные пользователем (нач формы) в множество
@@ -94,7 +94,7 @@ async def bot_sentence(sentence, faculty):
         "Целевая квота": ["целевой", "целевых", "целевик", "целевым"],
         "Особая квота": ["квотный", "квотных", "квотник", "квотным",'особый', 'особая', 'особых'],
         "По договорам об оказании платных образовательных услуг": ["платный", "платник", "платных", "платным", 'платных мест'],
-        "Всего": ["все", 'общее']
+        "Всего": ["все", 'общее', 'общий', 'всего']
     }
 
     column = ""
@@ -107,7 +107,7 @@ async def bot_sentence(sentence, faculty):
     else:
         for i in range(len(faculty)):
             a = df3.loc[(df3["Направление подготовки (специальности)"] == faculty[i][0]) & (df3['Форма обучения'] == faculty[i][1]), column].values[0]
-            answers.append(f"На направлении - {faculty[i][0]}, форма обучения -  {faculty[i][1]}: {str(a)}")
+            answers.append(f"*Направление* - {faculty[i][0]}, {faculty[i][1]}:\n\n ● {str(a)}")
     return answers
 
 
